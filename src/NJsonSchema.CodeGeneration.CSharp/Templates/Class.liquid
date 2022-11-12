@@ -15,7 +15,6 @@
 {%- endif -%}
 {%- endfor -%}
 {%- endif -%}
-[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "{{ ToolchainVersion }}")]
 {%- if InheritsExceptionSchema -%}
 {%-   if UseSystemTextJson -%}
 // TODO(system.text.json): What to do here?
@@ -27,7 +26,7 @@
 [System.Obsolete{% if HasDeprecatedMessage %}({{ DeprecatedMessage | literal }}){% endif %}]
 {% endif -%}
 {%- template Class.Annotations -%}
-{{ TypeAccessModifier }} {% if IsAbstract %}abstract {% endif %}partial {% if GenerateNativeRecords %}record{% else %}class{% endif %} {{ClassName}} {%- template Class.Inheritance %}
+{{ TypeAccessModifier }} {% if IsAbstract %}abstract {% endif %}{% if GenerateNativeRecords %}record{% else %}class{% endif %} {{ClassName}} {%- template Class.Inheritance %}
 {
 {%- if IsTuple -%}
     public {{ ClassName }}({%- for tupleType in TupleTypes %}{{ tupleType }} item{{ forloop.index }}{%- if forloop.last == false %}, {% endif %}{% endfor %}) : base({%- for tupleType in TupleTypes %}item{{ forloop.index }}{%- if forloop.last == false %}, {% endif %}{% endfor %})
@@ -59,9 +58,7 @@
 {%-   if property.IsStringEnumArray %}
     // TODO(system.text.json): Add string enum item converter
 {%-   endif -%}
-{%- else -%}
-    [Newtonsoft.Json.JsonProperty("{{ property.Name }}", Required = {{ property.JsonPropertyRequiredCode }}{% if property.IsStringEnumArray %}, ItemConverterType = typeof(Newtonsoft.Json.Converters.StringEnumConverter){% endif %})]
-{%- endif -%}
+{%- else -%}{%- endif -%}
 {%-   if property.RenderRequiredAttribute -%}
     [System.ComponentModel.DataAnnotations.Required{% if property.AllowEmptyStrings %}(AllowEmptyStrings = true){% endif %}]
 {%-   endif -%}
@@ -120,7 +117,6 @@
     }
 {%-   endif %}
 {%- endfor -%}
-
 {%- if GenerateAdditionalPropertiesProperty -%}
 
     private System.Collections.Generic.IDictionary<string, {{ AdditionalPropertiesType }}>{% if GenerateNullableReferenceTypes %}?{% endif %} _additionalProperties;
